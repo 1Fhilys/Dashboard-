@@ -5,38 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f3f4f6;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #00c6ff;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
         }
         .container {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 40px 50px;
+            border-radius: 12px;
+            text-align: center;
             max-width: 600px;
-            margin: 0 auto;
-            background: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            border-radius: 8px;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 2s ease-out;
         }
         h1 {
-            color: #333;
+            font-size: 36px;
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-out;
         }
         #weather-info {
-            font-size: 18px;
-            color: #555;
+            font-size: 22px;
+            line-height: 1.6;
         }
-        #error {
-            color: red;
+        .temperature {
+            font-size: 50px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #ffeb3b;
+        }
+        .condition {
+            font-size: 20px;
+            color: #ff9100;
+            margin-bottom: 20px;
+        }
+        .icon {
+            width: 100px;
+            height: 100px;
+            margin: 20px 0;
+        }
+        .error {
+            color: #f44336;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes slideIn {
+            0% { transform: translateY(-50px); }
+            100% { transform: translateY(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Current Weather in New York, NY</h1>
-        <div id="weather-info">Loading weather...</div>
-        <p id="error"></p>
+        <h1>Weather in New York</h1>
+        <img class="icon" src="" alt="Weather Icon" id="weather-icon">
+        <div id="weather-info">Loading...</div>
+        <p class="error" id="error"></p>
     </div>
 
     <script>
@@ -56,19 +94,28 @@
                 displayWeather(data);
             } catch (error) {
                 document.getElementById('error').textContent = "Failed to load weather data. Please try again later.";
+                document.getElementById('weather-info').style.display = 'none';
             }
         }
 
         // Display Weather Data
         function displayWeather(data) {
-            const { name, main, weather } = data;
+            const { name, main, weather, sys } = data;
+            const temperature = `${main.temp} °C`;
+            const humidity = `Humidity: ${main.humidity}%`;
+            const condition = weather[0].description;
+            const iconCode = weather[0].icon;
+
             const weatherInfo = `
-                <p><strong>Location:</strong> ${name}</p>
-                <p><strong>Temperature:</strong> ${main.temp} °C</p>
-                <p><strong>Humidity:</strong> ${main.humidity}%</p>
-                <p><strong>Condition:</strong> ${weather[0].description}</p>
+                <div class="temperature">${temperature}</div>
+                <div class="condition">${condition}</div>
+                <div>${humidity}</div>
             `;
+            const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+            // Update HTML
             document.getElementById('weather-info').innerHTML = weatherInfo;
+            document.getElementById('weather-icon').src = iconUrl;
         }
 
         // Load Weather Data on Page Load
